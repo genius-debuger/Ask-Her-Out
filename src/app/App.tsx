@@ -280,32 +280,32 @@ export default function App() {
       {/* ── Animated ambient blobs ──────────────────────────────────── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <motion.div
-          animate={{ x: [0, 32, 0], y: [0, -24, 0] }}
+          animate={{ x: [0, 24, 0], y: [0, -18, 0] }}
           transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
           className="absolute -top-40 -left-40 w-[520px] h-[520px] rounded-full bg-pink-200/22 blur-3xl"
         />
         <motion.div
-          animate={{ x: [0, -26, 0], y: [0, 30, 0] }}
+          animate={{ x: [0, -20, 0], y: [0, 24, 0] }}
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 4 }}
           className="absolute -bottom-40 -right-40 w-[520px] h-[520px] rounded-full bg-emerald-200/22 blur-3xl"
         />
         <motion.div
-          animate={{ scale: [1, 1.14, 1], opacity: [0.15, 0.23, 0.15] }}
-          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut", delay: 2.5 }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-rose-100/28 blur-3xl"
+          animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.22, 0.15] }}
+          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut", delay: 2.5 }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-rose-100/28 blur-3xl"
         />
       </div>
 
       {/* ── Drifting clouds (FIXED: absolute via style.position + style.top) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <DriftingCloud delay={0}  duration={48} top="10%"  scale={0.55} opacity={0.28} color="bg-white/65" />
-        <DriftingCloud delay={16} duration={52} top="62%"  scale={0.50} opacity={0.20} color="bg-white/50" />
-        <DriftingCloud delay={27} duration={44} top="33%"  scale={0.65} opacity={0.32} color="bg-rose-50/55" />
-        <DriftingCloud delay={6}  duration={36} top="20%"  scale={1.00} opacity={0.52} color="bg-white/80" />
-        <DriftingCloud delay={21} duration={39} top="74%"  scale={0.90} opacity={0.42} color="bg-emerald-50/70" />
-        <DriftingCloud delay={36} duration={31} top="7%"   scale={1.10} opacity={0.62} color="bg-white/90" />
-        <DriftingCloud delay={11} duration={26} top="46%"  scale={1.40} opacity={0.72} color="bg-white" />
-        <DriftingCloud delay={29} duration={23} top="83%"  scale={1.65} opacity={0.85} color="bg-white" />
+        <DriftingCloud delay={0}  duration={52} top="10%"  scale={0.5}  opacity={0.26} color="bg-white/65" />
+        <DriftingCloud delay={16} duration={56} top="62%"  scale={0.46} opacity={0.2}  color="bg-white/50" />
+        <DriftingCloud delay={27} duration={48} top="33%"  scale={0.6}  opacity={0.3}  color="bg-rose-50/55" />
+        <DriftingCloud delay={6}  duration={40} top="20%"  scale={0.9}  opacity={0.5}  color="bg-white/80" />
+        <DriftingCloud delay={21} duration={43} top="74%"  scale={0.82} opacity={0.4}  color="bg-emerald-50/70" />
+        <DriftingCloud delay={36} duration={34} top="7%"   scale={1.0}  opacity={0.6}  color="bg-white/90" />
+        <DriftingCloud delay={11} duration={30} top="46%"  scale={1.25} opacity={0.7}  color="bg-white" />
+        <DriftingCloud delay={29} duration={27} top="83%"  scale={1.45} opacity={0.8}  color="bg-white" />
       </div>
 
       {/* ── Floating hearts (mobile-optimized count) ──────────────────── */}
