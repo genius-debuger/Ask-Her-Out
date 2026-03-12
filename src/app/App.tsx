@@ -60,18 +60,18 @@ const DriftingCloud = ({
 
 // ─── Floating hearts ───────────────────────────────────────────────────────
 // BUG FIX: stable positions via seeded random (no Math.random() in render)
-const FloatingHearts = () => {
+const FloatingHearts = ({ isMobile = false }: { isMobile?: boolean }) => {
   const hearts = useMemo(
     () =>
-      Array.from({ length: 14 }, (_, i) => ({
+      Array.from({ length: isMobile ? 8 : 14 }, (_, i) => ({
         id: i,
         left: `${sr(i * 2) * 88 + 5}vw`,
-        delay: sr(i * 3 + 1) * 14,
-        duration: sr(i * 5 + 2) * 8 + 14,
-        size: Math.floor(sr(i * 7 + 3) * 18 + 11),
-        drift: sr(i * 11 + 4) * 80 - 40,
+        delay: sr(i * 3 + 1) * (isMobile ? 10 : 14),
+        duration: sr(i * 5 + 2) * (isMobile ? 6 : 8) + (isMobile ? 10 : 14),
+        size: Math.floor(sr(i * 7 + 3) * (isMobile ? 14 : 18) + 11),
+        drift: sr(i * 11 + 4) * (isMobile ? 60 : 80) - (isMobile ? 30 : 40),
       })),
-    []
+    [isMobile]
   );
 
   return (
@@ -150,6 +150,7 @@ export default function App() {
   const [noPos, setNoPos] = useState({ x: 0, y: 0 });
   const [hintVisible, setHintVisible] = useState(false);
   const lastHoverTime = useRef(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Basic page view
   useEffect(() => {
@@ -159,6 +160,16 @@ export default function App() {
   useEffect(() => {
     if (noCount >= 5) setHintVisible(true);
   }, [noCount]);
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      if (typeof window === "undefined") return;
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
 
   // ── Confetti items (stable) ──────────────────────────────────────────
   const confettiColors = [
@@ -172,7 +183,7 @@ export default function App() {
   ];
   const confettiItems = useMemo(
     () =>
-      Array.from({ length: 30 }, (_, i) => ({
+      Array.from({ length: isMobile ? 18 : 30 }, (_, i) => ({
         id: i,
         x: (sr(i * 2) * 2 - 1) * 230,
         y: sr(i * 3 + 1) * -200 - 20,
@@ -180,7 +191,7 @@ export default function App() {
         color: confettiColors[i % confettiColors.length],
         delay: sr(i * 5) * 0.28,
       })),
-    []
+    [isMobile]
   );
 
   // ── No button phrases ────────────────────────────────────────────────
@@ -297,8 +308,8 @@ export default function App() {
         <DriftingCloud delay={29} duration={23} top="83%"  scale={1.65} opacity={0.85} color="bg-white" />
       </div>
 
-      {/* ── Floating hearts (FIXED: stable seeded values) ─────────────── */}
-      <FloatingHearts />
+      {/* ── Floating hearts (mobile-optimized count) ──────────────────── */}
+      <FloatingHearts isMobile={isMobile} />
 
       {/* ── Main content ─────────────────────────────────────────────── */}
       <div className="relative z-10 w-full max-w-2xl px-4 sm:px-6 flex flex-col items-center justify-center text-center py-10">
