@@ -63,13 +63,13 @@ const DriftingCloud = ({
 const FloatingHearts = ({ isMobile = false }: { isMobile?: boolean }) => {
   const hearts = useMemo(
     () =>
-      Array.from({ length: isMobile ? 8 : 14 }, (_, i) => ({
+      Array.from({ length: isMobile ? 10 : 14 }, (_, i) => ({
         id: i,
         left: `${sr(i * 2) * 88 + 5}vw`,
-        delay: sr(i * 3 + 1) * (isMobile ? 10 : 14),
-        duration: sr(i * 5 + 2) * (isMobile ? 6 : 8) + (isMobile ? 10 : 14),
-        size: Math.floor(sr(i * 7 + 3) * (isMobile ? 14 : 18) + 11),
-        drift: sr(i * 11 + 4) * (isMobile ? 60 : 80) - (isMobile ? 30 : 40),
+        delay: sr(i * 3 + 1) * (isMobile ? 11 : 14),
+        duration: sr(i * 5 + 2) * (isMobile ? 7 : 8) + (isMobile ? 12 : 14),
+        size: Math.floor(sr(i * 7 + 3) * (isMobile ? 16 : 18) + 11),
+        drift: sr(i * 11 + 4) * (isMobile ? 70 : 80) - (isMobile ? 32 : 40),
       })),
     [isMobile]
   );
@@ -183,13 +183,13 @@ export default function App() {
   ];
   const confettiItems = useMemo(
     () =>
-      Array.from({ length: isMobile ? 18 : 30 }, (_, i) => ({
+      Array.from({ length: isMobile ? 12 : 26 }, (_, i) => ({
         id: i,
-        x: (sr(i * 2) * 2 - 1) * 230,
-        y: sr(i * 3 + 1) * -200 - 20,
+        x: (sr(i * 2) * 2 - 1) * (isMobile ? 190 : 230),
+        y: sr(i * 3 + 1) * (isMobile ? -160 : -200) - 20,
         rotate: (sr(i * 7) * 2 - 1) * 560,
         color: confettiColors[i % confettiColors.length],
-        delay: sr(i * 5) * 0.28,
+        delay: sr(i * 5) * (isMobile ? 0.22 : 0.28),
       })),
     [isMobile]
   );
@@ -280,19 +280,19 @@ export default function App() {
       {/* ── Animated ambient blobs ──────────────────────────────────── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <motion.div
-          animate={{ x: [0, 38, 0], y: [0, -28, 0] }}
+          animate={{ x: [0, 32, 0], y: [0, -24, 0] }}
           transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
           className="absolute -top-40 -left-40 w-[520px] h-[520px] rounded-full bg-pink-200/22 blur-3xl"
         />
         <motion.div
-          animate={{ x: [0, -30, 0], y: [0, 35, 0] }}
+          animate={{ x: [0, -26, 0], y: [0, 30, 0] }}
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 4 }}
           className="absolute -bottom-40 -right-40 w-[520px] h-[520px] rounded-full bg-emerald-200/22 blur-3xl"
         />
         <motion.div
-          animate={{ scale: [1, 1.18, 1], opacity: [0.15, 0.25, 0.15] }}
-          transition={{ duration: 13, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[440px] h-[440px] rounded-full bg-rose-100/28 blur-3xl"
+          animate={{ scale: [1, 1.14, 1], opacity: [0.15, 0.23, 0.15] }}
+          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut", delay: 2.5 }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-rose-100/28 blur-3xl"
         />
       </div>
 
