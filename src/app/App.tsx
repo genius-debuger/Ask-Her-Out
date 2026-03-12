@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Heart, Coffee, Sparkles } from "lucide-react";
+import { Heart, Coffee, Sparkles, Music } from "lucide-react";
+
+const LA_VIE_EN_ROSE_URL = "https://www.youtube.com/watch?v=3Ba_WoSZXvw";
 
 // ─── Seeded pseudo-random – stable across re-renders ──────────────────────
 const sr = (seed: number) => {
@@ -310,6 +312,20 @@ export default function App() {
 
       {/* ── Floating hearts (mobile-optimized count) ──────────────────── */}
       <FloatingHearts isMobile={isMobile} />
+
+      {/* ── Play music: La Vie en rose (Daniela Andrade) ───────────────── */}
+      <motion.a
+        href={LA_VIE_EN_ROSE_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1 }}
+        className="fixed bottom-5 right-5 z-50 flex items-center gap-2 bg-white/90 hover:bg-white backdrop-blur-sm rounded-full px-4 py-2.5 shadow-lg border border-rose-100 text-rose-600 font-medium text-sm no-underline"
+      >
+        <Music size={18} className="text-rose-500" />
+        <span>La Vie en rose</span>
+      </motion.a>
 
       {/* ── Main content ─────────────────────────────────────────────── */}
       <div className="relative z-10 w-full max-w-2xl px-4 sm:px-6 flex flex-col items-center justify-center text-center py-10">
