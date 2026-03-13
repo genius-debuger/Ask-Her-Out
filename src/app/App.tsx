@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Heart, Coffee, Sparkles, Music } from "lucide-react";
+import { Heart, Coffee, Sparkles, Music, Play, Pause } from "lucide-react";
 
 const SOUNDCLOUD_TRACK_URL = "https://soundcloud.com/user-74013915/la-vie-en-rose-daniela-andrade";
 const SOUNDCLOUD_EMBED = `https://w.soundcloud.com/player/?url=${encodeURIComponent(SOUNDCLOUD_TRACK_URL)}&auto_play=true&hide_related=true&show_comments=false`;
@@ -155,30 +155,44 @@ export default function App() {
   const lastHoverTime = useRef(0);
   const [isMobile, setIsMobile] = useState(false);
   const [musicUnlocked, setMusicUnlocked] = useState(false);
-  const [musicPlaying, setMusicPlaying] = useState(true);
+  const [musicPaused, setMusicPaused] = useState(false);
   const soundCloudIframeRef = useRef<HTMLIFrameElement>(null);
+  const soundCloudWidgetRef = useRef<any>(null);
 
   // Basic page view
   useEffect(() => {
     track("page_view_coffee_date", { page: "invite" });
   }, []);
 
-  // Start SoundCloud playback when iframe is ready (after user tap)
+  // Wire up SoundCloud widget when iframe is ready (after user tap)
   useEffect(() => {
-    if (!musicPlaying || !musicUnlocked || !soundCloudIframeRef.current) return;
+    if (!musicUnlocked || !soundCloudIframeRef.current) return;
     const el = soundCloudIframeRef.current;
     const SC = (window as any).SC;
     if (!SC) return;
     const widget = SC.Widget(el);
+    soundCloudWidgetRef.current = widget;
     widget.bind(SC.Widget.Events.READY, () => {
       widget.play();
+      setMusicPaused(false);
     });
     return () => {
       try {
         widget.unbind(SC.Widget.Events.READY);
       } catch (_) {}
+      soundCloudWidgetRef.current = null;
     };
-  }, [musicPlaying, musicUnlocked]);
+  }, [musicUnlocked]);
+
+  const handlePauseMusic = useCallback(() => {
+    soundCloudWidgetRef.current?.pause();
+    setMusicPaused(true);
+  }, []);
+
+  const handleResumeMusic = useCallback(() => {
+    soundCloudWidgetRef.current?.play();
+    setMusicPaused(false);
+  }, []);
 
   useEffect(() => {
     if (noCount >= 5) setHintVisible(true);
@@ -357,41 +371,45 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* ── Background music: La Vie en rose via SoundCloud ─── */}
-      {musicPlaying && musicUnlocked ? (
+      {/* ── Hidden SoundCloud iframe (audio only, controlled by Widget API) ─── */}
+      {musicUnlocked && (
+        <iframe
+          ref={soundCloudIframeRef}
+          title="La Vie en rose - Daniela Andrade"
+          src={SOUNDCLOUD_EMBED}
+          className="absolute w-px h-px opacity-0 pointer-events-none -left-[9999px]"
+          allow="autoplay"
+        />
+      )}
+
+      {/* ── Pause / Resume music (small floating control) ─── */}
+      {musicUnlocked && (
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-rose-100 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] p-2 flex items-center gap-3"
-        >
-          <iframe
-            ref={soundCloudIframeRef}
-            title="La Vie en rose - Daniela Andrade"
-            src={SOUNDCLOUD_EMBED}
-            className="w-full max-w-md h-20 rounded-lg"
-            allow="autoplay"
-          />
-          <button
-            type="button"
-            onClick={() => setMusicPlaying(false)}
-            className="shrink-0 text-rose-500 hover:text-rose-600 text-sm font-medium px-3 py-1.5 rounded-full bg-rose-50"
-          >
-            Close
-          </button>
-        </motion.div>
-      ) : musicUnlocked ? (
-        <motion.button
-          type="button"
-          onClick={() => setMusicPlaying(true)}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 bg-white/90 hover:bg-white backdrop-blur-sm rounded-full px-4 py-2.5 shadow-lg border border-rose-100 text-rose-600 font-medium text-sm cursor-pointer"
+          transition={{ delay: 0.4 }}
+          className="fixed top-4 right-4 z-50 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1.5 shadow-lg border border-rose-100"
         >
-          <Music size={18} className="text-rose-500" />
-          <span>Play: La Vie en rose</span>
-        </motion.button>
-      ) : null}
+          <button
+            type="button"
+            onClick={handlePauseMusic}
+            disabled={musicPaused}
+            className="p-2 rounded-full text-rose-500 hover:bg-rose-50 disabled:opacity-40 disabled:cursor-default"
+            title="Pause music"
+          >
+            <Pause size={18} />
+          </button>
+          <button
+            type="button"
+            onClick={handleResumeMusic}
+            disabled={!musicPaused}
+            className="p-2 rounded-full text-rose-500 hover:bg-rose-50 disabled:opacity-40 disabled:cursor-default"
+            title="Resume music"
+          >
+            <Play size={18} />
+          </button>
+        </motion.div>
+      )}
 
       {/* ── Main content ─────────────────────────────────────────────── */}
       <div className="relative z-10 w-full max-w-2xl px-4 sm:px-6 flex flex-col items-center justify-center text-center py-10">
