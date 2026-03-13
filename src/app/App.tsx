@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from "react"
 import { motion, AnimatePresence } from "motion/react";
 import { Heart, Coffee, Sparkles, Music } from "lucide-react";
 
-const SOUNDCLOUD_TRACK_URL = "https://on.soundcloud.com/5sNvcHPrQHEELAyTo0";
+const SOUNDCLOUD_TRACK_URL = "https://soundcloud.com/user-74013915/la-vie-en-rose-daniela-andrade";
 const SOUNDCLOUD_EMBED = `https://w.soundcloud.com/player/?url=${encodeURIComponent(SOUNDCLOUD_TRACK_URL)}&auto_play=true&hide_related=true&show_comments=false`;
 
 // ─── Seeded pseudo-random – stable across re-renders ──────────────────────
