@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from "react"
 import { motion, AnimatePresence } from "motion/react";
 import { Heart, Coffee, Sparkles, Music } from "lucide-react";
 
-const LA_VIE_EN_ROSE_EMBED = "https://www.youtube.com/embed/3Ba_WoSZXvw?autoplay=1";
+const SOUNDCLOUD_TRACK_URL = "https://on.soundcloud.com/5sNvcHPrQHEELAyTo0";
+const SOUNDCLOUD_EMBED = `https://w.soundcloud.com/player/?url=${encodeURIComponent(SOUNDCLOUD_TRACK_URL)}&auto_play=true&hide_related=true&show_comments=false`;
 
 // ─── Seeded pseudo-random – stable across re-renders ──────────────────────
 const sr = (seed: number) => {
@@ -153,7 +154,7 @@ export default function App() {
   const [hintVisible, setHintVisible] = useState(false);
   const lastHoverTime = useRef(0);
   const [isMobile, setIsMobile] = useState(false);
-  const [musicPlaying, setMusicPlaying] = useState(false);
+  const [musicPlaying, setMusicPlaying] = useState(true);
 
   // Basic page view
   useEffect(() => {
@@ -314,8 +315,29 @@ export default function App() {
       {/* ── Floating hearts (mobile-optimized count) ──────────────────── */}
       <FloatingHearts isMobile={isMobile} />
 
-      {/* ── Play music in background: La Vie en rose (Daniela Andrade) ─── */}
-      {!musicPlaying ? (
+      {/* ── Background music: La Vie en rose via SoundCloud (autoplay on load) ─── */}
+      {musicPlaying ? (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-rose-100 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] p-2 flex items-center gap-3"
+        >
+          <iframe
+            title="La Vie en rose - Daniela Andrade"
+            src={SOUNDCLOUD_EMBED}
+            className="w-full max-w-md h-20 rounded-lg"
+            allow="autoplay"
+          />
+          <button
+            type="button"
+            onClick={() => setMusicPlaying(false)}
+            className="shrink-0 text-rose-500 hover:text-rose-600 text-sm font-medium px-3 py-1.5 rounded-full bg-rose-50"
+          >
+            Close
+          </button>
+        </motion.div>
+      ) : (
         <motion.button
           type="button"
           onClick={() => setMusicPlaying(true)}
@@ -327,27 +349,6 @@ export default function App() {
           <Music size={18} className="text-rose-500" />
           <span>Play: La Vie en rose</span>
         </motion.button>
-      ) : (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-rose-100 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] p-2 flex items-center gap-3"
-        >
-          <iframe
-            title="La Vie en rose - Daniela Andrade"
-            src={LA_VIE_EN_ROSE_EMBED}
-            className="w-full max-w-md h-20 rounded-lg"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-          <button
-            type="button"
-            onClick={() => setMusicPlaying(false)}
-            className="shrink-0 text-rose-500 hover:text-rose-600 text-sm font-medium px-3 py-1.5 rounded-full bg-rose-50"
-          >
-            Close
-          </button>
-        </motion.div>
       )}
 
       {/* ── Main content ─────────────────────────────────────────────── */}
