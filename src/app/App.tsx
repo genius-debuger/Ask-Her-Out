@@ -154,12 +154,31 @@ export default function App() {
   const [hintVisible, setHintVisible] = useState(false);
   const lastHoverTime = useRef(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [musicUnlocked, setMusicUnlocked] = useState(false);
   const [musicPlaying, setMusicPlaying] = useState(true);
+  const soundCloudIframeRef = useRef<HTMLIFrameElement>(null);
 
   // Basic page view
   useEffect(() => {
     track("page_view_coffee_date", { page: "invite" });
   }, []);
+
+  // Start SoundCloud playback when iframe is ready (after user tap)
+  useEffect(() => {
+    if (!musicPlaying || !musicUnlocked || !soundCloudIframeRef.current) return;
+    const el = soundCloudIframeRef.current;
+    const SC = (window as any).SC;
+    if (!SC) return;
+    const widget = SC.Widget(el);
+    widget.bind(SC.Widget.Events.READY, () => {
+      widget.play();
+    });
+    return () => {
+      try {
+        widget.unbind(SC.Widget.Events.READY);
+      } catch (_) {}
+    };
+  }, [musicPlaying, musicUnlocked]);
 
   useEffect(() => {
     if (noCount >= 5) setHintVisible(true);
@@ -315,15 +334,39 @@ export default function App() {
       {/* ── Floating hearts (mobile-optimized count) ──────────────────── */}
       <FloatingHearts isMobile={isMobile} />
 
-      {/* ── Background music: La Vie en rose via SoundCloud (autoplay on load) ─── */}
-      {musicPlaying ? (
+      {/* ── One-tap overlay to unlock music (browsers require user gesture for audio) ─── */}
+      <AnimatePresence>
+        {!musicUnlocked && (
+          <motion.div
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={() => setMusicUnlocked(true)}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-gradient-to-br from-rose-50/98 to-pink-50/98 backdrop-blur-sm cursor-pointer"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="text-center px-8"
+            >
+              <Music size={48} className="mx-auto text-rose-400 mb-4" />
+              <p className="text-rose-600 font-semibold text-lg">Tap to start the music</p>
+              <p className="text-rose-400 text-sm mt-1">La Vie en rose 💕</p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Background music: La Vie en rose via SoundCloud ─── */}
+      {musicPlaying && musicUnlocked ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.2 }}
           className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-rose-100 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] p-2 flex items-center gap-3"
         >
           <iframe
+            ref={soundCloudIframeRef}
             title="La Vie en rose - Daniela Andrade"
             src={SOUNDCLOUD_EMBED}
             className="w-full max-w-md h-20 rounded-lg"
@@ -337,19 +380,18 @@ export default function App() {
             Close
           </button>
         </motion.div>
-      ) : (
+      ) : musicUnlocked ? (
         <motion.button
           type="button"
           onClick={() => setMusicPlaying(true)}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
           className="fixed bottom-5 right-5 z-50 flex items-center gap-2 bg-white/90 hover:bg-white backdrop-blur-sm rounded-full px-4 py-2.5 shadow-lg border border-rose-100 text-rose-600 font-medium text-sm cursor-pointer"
         >
           <Music size={18} className="text-rose-500" />
           <span>Play: La Vie en rose</span>
         </motion.button>
-      )}
+      ) : null}
 
       {/* ── Main content ─────────────────────────────────────────────── */}
       <div className="relative z-10 w-full max-w-2xl px-4 sm:px-6 flex flex-col items-center justify-center text-center py-10">
